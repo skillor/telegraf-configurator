@@ -1,0 +1,15 @@
+<div class="list-group">
+    <div *ngFor="let plugin of selectedPlugins" class="list-group-item">
+        <button (click)="selectPlugin.emit(plugin)" type="button">
+            {{ plugin.name }}
+        </button>
+        <button (click)="removePlugin.emit(plugin)" type="button">-</button>
+    </div>
+</div>
+<button *ngIf="!addingPlugin" type="button" class="btn btn-primary" (click)="addingPlugin = true">Add Plugin</button>
+<div *ngIf="addingPlugin" class="list-group">
+    <button *ngFor="let plugin of plugins" (click)="addingPlugin = false; addPlugin.emit(plugin)" type="button"
+        class="list-group-item list-group-item-action">
+        {{plugin}}
+    </button>
+</div>

@@ -1,0 +1,9 @@
+<div *ngIf="pluginService.getSampleConfs() as sampleConfs; else loading">
+    <app-plugin-list [plugins]="pluginService.getPlugins()" [selectedPlugins]="pluginService.getSelectedPlugins()"
+        (addPlugin)="pluginService.addSelectedPlugin($event)"
+        (removePlugin)="pluginService.removeSelectedPlugin($event)"
+        (selectPlugin)="pluginService.selectSelectedPlugin($event)"></app-plugin-list>
+</div>
+<ng-template #loading>
+    <div class="spinner-border" role="status"></div>
+</ng-template>
