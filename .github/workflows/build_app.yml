@@ -1,0 +1,42 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node Build App Example
+
+on:
+  push:
+    branches: [ master ]
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '12'
+        cache: 'npm'
+        cache-dependency-path: ./frontend/package-lock.json
+    - name: npm install and build
+      run: |
+        npm install esbuild
+        npm i
+        npx ng build --configuration production --source-map false --aot true --build-optimizer true --optimization true --vendor-chunk false --base-href /${{ github.event.repository.name }}/app/
+      working-directory: .
+    - name: Copy dist to webserver static
+      run: |
+        rm -rf ./docs/app
+        cp -r ./dist/syncwatch-frontend ./docs/app
+    - name: Commit static
+      run: |
+        git config --global user.name "Build Runner"
+        git add --force ./docs/app
+        git diff-index --quiet HEAD || git commit -m "Automated pages app build" && git push
