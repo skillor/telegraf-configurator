@@ -1,9 +1,13 @@
-<div *ngIf="pluginService.getSampleConfs() as sampleConfs; else loading">
-    <app-plugin-list [plugins]="pluginService.getPlugins()" [selectedPlugins]="pluginService.getSelectedPlugins()"
+<ng-container *ngIf="pluginService.getSampleConfs() as sampleConfs; else loading">
+    <app-plugin-list
+        [plugins]="pluginService.getPlugins()"
+        [selectedPlugins]="pluginService.getSelectedPlugins()"
+        [selectedPlugin]="pluginService.getSelectedPlugin()"
         (addPlugin)="pluginService.addSelectedPlugin($event)"
         (removePlugin)="pluginService.removeSelectedPlugin($event)"
         (selectPlugin)="pluginService.selectSelectedPlugin($event)"></app-plugin-list>
-</div>
+    <app-advanced-config-editor [plugin]="pluginService.getSelectedPlugin()"></app-advanced-config-editor>
+</ng-container>
 <ng-template #loading>
     <div class="spinner-border" role="status"></div>
 </ng-template>

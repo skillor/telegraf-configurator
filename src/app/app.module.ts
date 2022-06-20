@@ -7,6 +7,8 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
 import { PluginListComponent } from './components/plugin-list/plugin-list.component';
 import { AdvancedConfigEditorComponent } from './components/advanced-config-editor/advanced-config-editor.component';
+import { FormsModule } from '@angular/forms';
+import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
 
 @NgModule({
   declarations: [
@@ -19,6 +21,8 @@ import { AdvancedConfigEditorComponent } from './components/advanced-config-edit
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    FormsModule,
+    MonacoEditorModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

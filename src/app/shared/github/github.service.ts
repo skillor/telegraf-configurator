@@ -4,6 +4,7 @@ import { map, Observable } from 'rxjs';
 import { GithubRepo } from './github-repo';
 import { GithubBlob } from './github-blob';
 import { IndexedBlobs } from './indexed-blobs';
+import { RepoInfo } from './repo-info';
 
 @Injectable({
     providedIn: 'root'
@@ -24,15 +25,14 @@ export class GithubService {
         return indexed;
     }
 
-    getApiUrl(
-        repo_owner: string,
-        repo_name: string,
-        branch_name: string,
-        recursive: boolean = false,
-    ): string {
-        let url = new URL('https://api.github.com/repos/' + repo_owner + '/' + repo_name + '/git/trees/' + branch_name);
+    getApiUrl(repoInfo: RepoInfo, recursive: boolean = false): string {
+        let url = new URL('https://api.github.com/repos/' + repoInfo.owner + '/' + repoInfo.name + '/git/trees/' + repoInfo.branch);
         if (recursive) url.searchParams.append('recursive', '1');
         return url.toString();
+    }
+
+    getRawUrl(repoInfo: RepoInfo, path: string): string {
+        return 'https://raw.githubusercontent.com/' + repoInfo.owner + '/' + repoInfo.name + '/' + repoInfo.branch + '/' + path;
     }
 
     getIndexedBlobs(
@@ -45,5 +45,25 @@ export class GithubService {
             map(tree => tree.filter((item: GithubBlob) => item.type === 'blob')),
             map(tree => this.indexBlobs(tree, startsWith, endsWith)),
         );
+    }
+
+    getBlobContent(url: string): Observable<string> {
+        return this.http.get<GithubBlob>(url).pipe(
+            map(
+                res => {
+                    if (res.content === undefined) {
+                        throw new Error('blob content not found');
+                    }
+                    if (res.encoding !== 'base64') {
+                        throw new Error('blob encoding is not base64');
+                    }
+                    return atob(res.content);
+                },
+            ),
+        );
+    }
+
+    getRawContent(url: string): Observable<string> {
+        return this.http.get(url, {responseType: 'text'});
     }
 }

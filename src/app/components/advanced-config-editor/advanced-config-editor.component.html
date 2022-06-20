@@ -1,1 +1,7 @@
-<p>advanced-config-editor works!</p>
+<ng-container *ngIf="plugin && plugin.content !== undefined; else loading">
+    <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="plugin.content"></ngx-monaco-editor>
+</ng-container>
+<ng-template #loading>
+    <ngx-monaco-editor class="d-none" [options]="editorOptions"></ngx-monaco-editor>
+    <div *ngIf="plugin" class="spinner-border" role="status"></div>
+</ng-template>

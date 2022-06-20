@@ -12,8 +12,6 @@ export class HomeComponent implements OnInit {
     constructor(public pluginService: PluginService) { }
 
     ngOnInit(): void {
-        this.pluginService.loadSampleConfs().subscribe(
-            // x => console.log(x)
-        );
+        this.pluginService.loadSampleConfs().subscribe();
     }
 }

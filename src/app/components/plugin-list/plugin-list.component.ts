@@ -11,6 +11,9 @@ export class PluginListComponent implements OnInit {
     plugins?: string[];
 
     @Input()
+    selectedPlugin?: Plugin;
+
+    @Input()
     selectedPlugins?: Plugin[] = [];
 
     @Output()
