@@ -89,4 +89,20 @@ export class PluginService {
             );
         }
     }
+
+    getConfigContent(): string {
+        return Object.values(this.selectedPlugins).filter(
+            plugin => plugin.content
+        ).map(
+            plugin => plugin.content
+        ).join('\n');
+    }
+
+    downloadConfig() {
+        const a = document.createElement('a');
+        const file = new Blob([this.getConfigContent()], {type: 'text/plain'});
+        a.href = URL.createObjectURL(file);
+        a.download = 'telegraf.conf';
+        a.click();
+    }
 }
