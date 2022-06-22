@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Plugin } from 'src/app/shared/plugin/plugin';
 
 @Component({
@@ -8,7 +8,10 @@ import { Plugin } from 'src/app/shared/plugin/plugin';
 })
 export class PluginListComponent implements OnInit {
     @Input()
-    plugins?: string[];
+    mandatoryPlugins?: Plugin[];
+
+    @Input()
+    optionalPlugins?: string[];
 
     @Input()
     selectedPlugin?: Plugin;

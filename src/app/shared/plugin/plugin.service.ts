@@ -14,6 +14,8 @@ export class PluginService {
     private repoInfo: RepoInfo;
     private sampleConfs?: IndexedBlobs = undefined;
 
+    private mandatoryPlugins: Plugin[];
+
     private selectedPlugin?: Plugin = undefined;
     private selectedPlugins: {[id: string]: Plugin} = {};
     private selectedPluginsCounter = 0;
@@ -24,9 +26,22 @@ export class PluginService {
     ) {
         const repoInfo = this.storageService.loadRepoInfo();
         if (repoInfo === null) {
-            this.repoInfo = {owner: 'influxdata', name: 'telegraf', branch: 'master'};
+            this.repoInfo = {owner: 'skillor', name: 'telegraf', branch: 'chore/agent-config'};
         } else {
             this.repoInfo = repoInfo;
+        }
+
+        this.mandatoryPlugins = [
+            {
+                id: 1,
+                name: 'agent',
+                content: undefined,
+                contentGetter: this.githubService.getRawContent(this.githubService.getRawUrl(this.repoInfo, 'config/agent.conf')),
+            }
+        ];
+
+        if (this.mandatoryPlugins && this.mandatoryPlugins.length >= 1) {
+            this.selectSelectedPlugin(this.mandatoryPlugins[0]);
         }
     }
 
@@ -52,7 +67,11 @@ export class PluginService {
         return this.sampleConfs;
     }
 
-    getPlugins(): string[] | undefined {
+    getMandatoryPlugins(): Plugin[] | undefined {
+        return this.mandatoryPlugins;
+    }
+
+    getOptionalPlugins(): string[] | undefined {
         if (this.sampleConfs === undefined) return undefined;
         return Object.keys(this.sampleConfs);
     }
@@ -70,6 +89,7 @@ export class PluginService {
             name: pluginName,
             id: this.selectedPluginsCounter,
             content: undefined,
+            contentGetter: this.githubService.getRawContent(this.githubService.getRawUrl(this.repoInfo, this.sampleConfs![pluginName].path)),
         };
         this.selectedPlugins[this.selectedPluginsCounter] = plugin;
         this.selectedPluginsCounter++;
@@ -84,14 +104,14 @@ export class PluginService {
     selectSelectedPlugin(plugin: Plugin) {
         this.selectedPlugin = plugin;
         if (plugin.content === undefined) {
-            this.githubService.getRawContent(this.githubService.getRawUrl(this.repoInfo, this.sampleConfs![plugin.name].path)).subscribe(
+            plugin.contentGetter.subscribe(
                 content => plugin.content = content
             );
         }
     }
 
     getConfigContent(): string {
-        return Object.values(this.selectedPlugins).filter(
+        return this.mandatoryPlugins.concat(Object.values(this.selectedPlugins)).filter(
             plugin => plugin.content
         ).map(
             plugin => plugin.content
