@@ -3,6 +3,7 @@ import { Observable,  of,  tap } from 'rxjs';
 import { GithubService } from '../github/github.service';
 import { IndexedBlobs } from '../github/indexed-blobs';
 import { RepoInfo } from '../github/repo-info';
+import { SettingsService } from '../settings/settings.service';
 import { StorageService } from '../storage/storage.service';
 import { Plugin } from './plugin';
 
@@ -11,7 +12,6 @@ import { Plugin } from './plugin';
 })
 export class PluginService {
 
-    private repoInfo: RepoInfo;
     private sampleConfs?: IndexedBlobs = undefined;
 
     private mandatoryPlugins: Plugin[];
@@ -23,20 +23,16 @@ export class PluginService {
     constructor(
         private githubService: GithubService,
         private storageService: StorageService,
+        private settingsService: SettingsService,
     ) {
-        const repoInfo = this.storageService.loadRepoInfo();
-        if (repoInfo === null) {
-            this.repoInfo = {owner: 'influxdata', name: 'telegraf', branch: 'master'};
-        } else {
-            this.repoInfo = repoInfo;
-        }
-
         this.mandatoryPlugins = [
             {
                 id: 1,
                 name: 'agent',
                 content: undefined,
-                contentGetter: this.githubService.getRawContent(this.githubService.getRawUrl(this.repoInfo, 'config/agent.conf')),
+                contentGetter: this.githubService.getRawContent(
+                    this.githubService.getRawUrl(this.settingsService.getRepoInfo(), 'config/agent.conf')
+                ),
             }
         ];
 
@@ -52,7 +48,7 @@ export class PluginService {
             return of(sampleConfs);
         }
         return this.githubService.getIndexedBlobs(
-            this.githubService.getApiUrl(this.repoInfo, true),
+            this.githubService.getApiUrl(this.settingsService.getRepoInfo(), true),
             'plugins/',
             '/sample.conf',
         ).pipe(
@@ -89,7 +85,7 @@ export class PluginService {
             name: pluginName,
             id: this.selectedPluginsCounter,
             content: undefined,
-            contentGetter: this.githubService.getRawContent(this.githubService.getRawUrl(this.repoInfo, this.sampleConfs![pluginName].path)),
+            contentGetter: this.githubService.getRawContent(this.githubService.getRawUrl(this.settingsService.getRepoInfo(), this.sampleConfs![pluginName].path)),
         };
         this.selectedPlugins[this.selectedPluginsCounter] = plugin;
         this.selectedPluginsCounter++;

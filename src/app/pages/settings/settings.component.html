@@ -1,0 +1,6 @@
+<a routerLink="/home" class="btn btn-secondary">Home</a>
+<div *ngFor="let setting of settings" class="mt-3">
+    <label [for]="'setting' + setting.key" class="form-label">{{ setting.title }}</label>
+    <input type="text" class="form-control" [id]="'setting' + setting.key" [(ngModel)]="setting.value">
+</div>
+<button type="button" class="btn btn-success" (click)="saveSettings()">Save</button>

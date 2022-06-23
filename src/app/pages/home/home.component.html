@@ -17,12 +17,17 @@
     <div class="flex-grow-1">
         <app-advanced-config-editor [plugin]="pluginService.getSelectedPlugin()"></app-advanced-config-editor>
     </div>
-    <div>
+    <div class="d-flex flex-column justify-content-between">
         <div>
-            <button type="button" class="btn btn-success">Build</button>
+            <div>
+                <button type="button" class="btn btn-success">Build</button>
+            </div>
+            <div>
+                <button type="button" class="btn btn-success" (click)="pluginService.downloadConfig()">Download Config</button>
+            </div>
         </div>
         <div>
-            <button type="button" class="btn btn-success" (click)="pluginService.downloadConfig()">Download</button>
+            <a routerLink="/settings" class="btn btn-secondary">Settings</a>
         </div>
     </div>
 </div>
