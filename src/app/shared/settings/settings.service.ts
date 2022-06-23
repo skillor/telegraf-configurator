@@ -33,9 +33,19 @@ export class SettingsService {
                 title: 'Git Repo Branch',
                 value: 'master',
             },
+            {
+                key: 'build_api_url',
+                title: 'Telegraf Build Api Url',
+                value: 'http://127.0.0.1:8000',
+            },
+            {
+                key: 'build_api_key',
+                title: 'Telegraf Build Api Key',
+                value: '',
+            },
         ];
         this.settings = {};
-        for (let setting of settings) {
+        for (const setting of settings) {
             this.settings[setting.key] = setting;
         }
         this.loadSettings();
@@ -60,7 +70,7 @@ export class SettingsService {
     }
 
     private loadSettings(): void {
-        for (let setting of Object.values(this.settings)) {
+        for (const setting of Object.values(this.settings)) {
             this.loadSetting(setting);
         }
     }
@@ -78,7 +88,7 @@ export class SettingsService {
     }
 
     saveSettings(): void {
-        for (let setting of Object.values(this.settings)) {
+        for (const setting of Object.values(this.settings)) {
             this.saveSetting(setting);
         }
     }

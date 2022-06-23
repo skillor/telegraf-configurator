@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable, tap } from 'rxjs';
+import { BuildApiService } from 'src/app/shared/build-api/build-api.service';
+import { BuildInfo } from 'src/app/shared/build-api/build-info';
 import { Plugin } from 'src/app/shared/plugin/plugin';
 import { PluginService } from 'src/app/shared/plugin/plugin.service';
 
@@ -9,9 +12,37 @@ import { PluginService } from 'src/app/shared/plugin/plugin.service';
 })
 export class HomeComponent implements OnInit {
 
-    constructor(public pluginService: PluginService) { }
+    buildLoading = false;
+    buildInfo$?: Observable<BuildInfo>;
+    buildOs = '';
+    buildArch = '';
+
+    constructor(
+        public pluginService: PluginService,
+        public buildApiService: BuildApiService,
+    ) {
+    }
 
     ngOnInit(): void {
+        this.buildInfo$ = this.buildApiService.getBuildInfo().pipe(
+            tap(buildInfo => {
+                this.buildOs = buildInfo.os[0];
+                this.buildArch = buildInfo.arch[0];
+            })
+        );
+
         this.pluginService.loadSampleConfs().subscribe();
+    }
+
+    build(): void {
+        this.buildLoading = true;
+        this.buildApiService.build(
+            this.buildOs,
+            this.buildArch,
+            this.pluginService.getSelectedPlugins(),
+        ).subscribe(x => {
+            this.buildLoading = false;
+            console.log(x)
+        });
     }
 }

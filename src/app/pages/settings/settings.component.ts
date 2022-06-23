@@ -21,14 +21,14 @@ export class SettingsComponent implements OnInit {
 
     loadSettings(): Setting[] {
         const settings: Setting[] = [];
-        for (let setting of this.settingsService.getSettings()) {
+        for (const setting of this.settingsService.getSettings()) {
             settings.push({...setting});
         }
         return settings;
     }
 
     saveSettings(): void {
-        for (let setting of this.settings) {
+        for (const setting of this.settings) {
             this.settingsService.setSetting(setting.key, setting.value);
         }
         this.settingsService.saveSettings();

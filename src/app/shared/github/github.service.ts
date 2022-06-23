@@ -16,7 +16,7 @@ export class GithubService {
 
     private indexBlobs(blobs: GithubBlob[], startsWith: string = '', endsWith: string = '', seperator: string = '/'): IndexedBlobs {
         let indexed: IndexedBlobs = {};
-        for (let blob of blobs) {
+        for (const blob of blobs) {
             if (blob.path.startsWith(startsWith) && blob.path.endsWith(endsWith)) {
                 const path = blob.path.substring(startsWith.length, blob.path.length-endsWith.length);
                 indexed[path] = blob;
