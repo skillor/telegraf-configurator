@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { catchError, Observable, tap } from 'rxjs';
 import { BuildApiService } from 'src/app/shared/build-api/build-api.service';
 import { BuildInfo } from 'src/app/shared/build-api/build-info';
 import { Plugin } from 'src/app/shared/plugin/plugin';
@@ -44,6 +44,11 @@ export class HomeComponent implements OnInit {
             this.buildOs,
             this.buildArch,
             this.pluginService.getSelectedPlugins(),
+        ).pipe(
+            catchError(err => {
+                this.buildLoading = false
+                return err;
+            }),
         ).subscribe(x => {
             this.buildLoading = false;
             console.log(x)
