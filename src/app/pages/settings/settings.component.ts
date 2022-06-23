@@ -19,6 +19,10 @@ export class SettingsComponent implements OnInit {
         this.settings = this.loadSettings();
     }
 
+    typeOf(value: any): string {
+        return typeof value;
+    }
+
     loadSettings(): Setting[] {
         const settings: Setting[] = [];
         for (const setting of this.settingsService.getSettings()) {

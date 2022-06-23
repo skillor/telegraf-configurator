@@ -18,30 +18,32 @@
     </div>
     <div class="d-flex flex-column justify-content-between">
         <div>
-            <form *ngIf="buildInfo$ | async as buildInfo; else buildInfoLoading" (ngSubmit)="build()">
-                <div>
-                    <label class="form-label" for="buildOs">OS:</label>
-                    <select class="form-select" id="buildOs" [(ngModel)]="buildOs" name="os">
-                        <option *ngFor="let os of buildInfo.os" [value]="os">{{os}}</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="form-label" for="buildArch">Arch:</label>
-                    <select class="form-select" id="buildArch" [(ngModel)]="buildArch" name="arch">
-                        <option *ngFor="let arch of buildInfo.arch" [value]="arch">{{arch}}</option>
-                    </select>
-                </div>
-                <div>
-                    <div *ngIf="buildLoading">
-                        <span class="spinner-border" role="status"></span>
-                        Building...
+            <ng-container *ngIf="this.settingsService.getSetting('activate_build_api').value">
+                <form *ngIf="buildInfo$ | async as buildInfo; else buildInfoLoading" (ngSubmit)="build()">
+                    <div>
+                        <label class="form-label" for="buildOs">OS:</label>
+                        <select class="form-select" id="buildOs" [(ngModel)]="buildOs" name="os">
+                            <option *ngFor="let os of buildInfo.os" [value]="os">{{os}}</option>
+                        </select>
                     </div>
-                    <button *ngIf="!buildLoading" type="submit" class="btn btn-success">Build</button>
-                </div>
-            </form>
-            <ng-template #buildInfoLoading>
-                <div class="spinner-border" role="status"></div>
-            </ng-template>
+                    <div>
+                        <label class="form-label" for="buildArch">Arch:</label>
+                        <select class="form-select" id="buildArch" [(ngModel)]="buildArch" name="arch">
+                            <option *ngFor="let arch of buildInfo.arch" [value]="arch">{{arch}}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <div *ngIf="buildLoading">
+                            <span class="spinner-border" role="status"></span>
+                            Building...
+                        </div>
+                        <button *ngIf="!buildLoading" type="submit" class="btn btn-success">Build</button>
+                    </div>
+                </form>
+                <ng-template #buildInfoLoading>
+                    <div class="spinner-border" role="status"></div>
+                </ng-template>
+            </ng-container>
             <div>
                 <button type="button" class="btn btn-success" (click)="pluginService.downloadConfig()">Download
                     Config</button>
