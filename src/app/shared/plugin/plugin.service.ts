@@ -26,7 +26,7 @@ export class PluginService {
     ) {
         const repoInfo = this.storageService.loadRepoInfo();
         if (repoInfo === null) {
-            this.repoInfo = {owner: 'skillor', name: 'telegraf', branch: 'chore/agent-config'};
+            this.repoInfo = {owner: 'influxdata', name: 'telegraf', branch: 'master'};
         } else {
             this.repoInfo = repoInfo;
         }
