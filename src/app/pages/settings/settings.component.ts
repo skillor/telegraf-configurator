@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Setting } from 'src/app/shared/settings/setting';
 import { SettingsService } from 'src/app/shared/settings/settings.service';
 
@@ -9,10 +10,11 @@ import { SettingsService } from 'src/app/shared/settings/settings.service';
 })
 export class SettingsComponent implements OnInit {
 
-    settings: Setting[] = [];
+    settings: {[key:string]: Setting} = {};
 
     constructor(
         private settingsService: SettingsService,
+        private router: Router,
     ) { }
 
     ngOnInit(): void {
@@ -23,18 +25,23 @@ export class SettingsComponent implements OnInit {
         return typeof value;
     }
 
-    loadSettings(): Setting[] {
-        const settings: Setting[] = [];
+    loadSettings(): { [key: string]: Setting } {
+        const settings: { [key: string]: Setting } = {};
         for (const setting of this.settingsService.getSettings()) {
-            settings.push({...setting});
+            settings[setting.key] = {...setting};
         }
         return settings;
     }
 
     saveSettings(): void {
-        for (const setting of this.settings) {
+        for (const setting of this.getSettings()) {
             this.settingsService.setSetting(setting.key, setting.value);
         }
         this.settingsService.saveSettings();
+        this.router.navigate(['/home']);
+    }
+
+    getSettings(): Setting[] {
+        return Object.values(this.settings);
     }
 }

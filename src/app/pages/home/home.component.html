@@ -1,5 +1,5 @@
 <div class="d-flex flex-row h-100">
-    <div>
+    <div class="sidebar overflow-auto">
         <ng-container *ngIf="pluginService.getSampleConfs() as sampleConfs; else loading">
             <app-plugin-list [mandatoryPlugins]="pluginService.getMandatoryPlugins()"
                 [optionalPlugins]="pluginService.getOptionalPlugins()"
@@ -13,15 +13,17 @@
             <div class="spinner-border" role="status"></div>
         </ng-template>
     </div>
-    <div class="flex-grow-1">
+    <div class="flex-grow-1 border-start border-end border-secondary">
         <app-advanced-config-editor [plugin]="pluginService.getSelectedPlugin()"></app-advanced-config-editor>
     </div>
-    <div class="d-flex flex-column justify-content-between">
-        <div>
+    <div class="d-flex flex-column sidebar">
+        <h4 class="text-center my-2">Build</h4>
+        <hr class="my-1">
+        <div class="flex-grow-1">
             <ng-container *ngIf="this.settingsService.getSetting('activate_build_api').value">
                 <form *ngIf="buildInfo$ | async as buildInfo; else buildInfoLoading" (ngSubmit)="build()">
-                    <ng-container *ngIf="!buildLoading">
-                        <div>
+                    <div *ngIf="!buildLoading" class="mb-4">
+                        <div class="mb-2">
                             <label class="form-label" for="buildOs">OS:</label>
                             <select class="form-select" id="buildOs" [(ngModel)]="buildOs" name="os">
                                 <option *ngFor="let os of buildInfo.os" [value]="os">{{os}}</option>
@@ -34,25 +36,33 @@
                             </select>
                         </div>
                         <div>
-                            <button type="submit" class="btn btn-success">Build</button>
+                            <button type="submit" class="btn btn-success w-100 mt-2">Build</button>
                         </div>
-                    </ng-container>
-                    <div *ngIf="buildLoading">
-                        <span class="spinner-border" role="status"></span>
-                        Building...
                     </div>
+                    <div *ngIf="buildLoading" class="text-center my-2">
+                        <div class="spinner-border" role="status"></div>
+                        <div>Building...</div>
+                    </div>
+                    <div class="mb-4 alert alert-danger py-1">
+                        Build failed 😿
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 mt-2">New Build</button>
+                    <button type="submit" class="btn btn-success w-100 mt-2">Download Build</button>
                 </form>
                 <ng-template #buildInfoLoading>
-                    <div class="spinner-border" role="status"></div>
+                    <div class="text-center my-2">
+                        <div class="spinner-border" role="status"></div>
+                        <div>Loading build info...</div>
+                    </div>
                 </ng-template>
             </ng-container>
             <div>
-                <button type="button" class="btn btn-success" (click)="pluginService.downloadConfig()">Download
+                <button type="button" class="btn btn-success w-100 mt-3" (click)="pluginService.downloadConfig()">Download
                     Config</button>
             </div>
         </div>
         <div>
-            <a routerLink="/settings" class="btn btn-secondary">Settings</a>
+            <a routerLink="/settings" class="btn btn-secondary w-100">Settings</a>
         </div>
     </div>
 </div>

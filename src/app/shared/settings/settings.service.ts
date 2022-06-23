@@ -42,11 +42,13 @@ export class SettingsService {
                 key: 'build_api_url',
                 title: 'Telegraf Build Api Url',
                 value: 'http://127.0.0.1:8000',
+                condition: 'activate_build_api',
             },
             {
                 key: 'build_api_key',
                 title: 'Telegraf Build Api Key',
                 value: '',
+                condition: 'activate_build_api',
             },
         ];
         this.settings = {};
