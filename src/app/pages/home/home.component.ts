@@ -14,6 +14,8 @@ import { SettingsService } from 'src/app/shared/settings/settings.service';
 export class HomeComponent implements OnInit {
 
     buildLoading = false;
+    buildError: undefined | Error = undefined;
+    buildResultLink: undefined | string = undefined;
     buildInfo$?: Observable<BuildInfo>;
     buildOs = '';
     buildArch = '';
@@ -39,19 +41,27 @@ export class HomeComponent implements OnInit {
     }
 
     build(): void {
+        this.buildError = undefined;
         this.buildLoading = true;
-        this.buildApiService.build(
+        this.buildApiService.buildGetResultLink(
             this.buildOs,
             this.buildArch,
             this.pluginService.getSelectedPlugins(),
         ).pipe(
             catchError(err => {
-                this.buildLoading = false
-                return err;
+                this.buildLoading = false;
+                this.buildError = err;
+                throw err;
             }),
-        ).subscribe(x => {
+        ).subscribe((build_id: string) => {
             this.buildLoading = false;
-            console.log(x)
+            this.buildResultLink = build_id;
         });
+    }
+
+    newBuild(): void {
+        this.buildError = undefined;
+        this.buildLoading = false;
+        this.buildResultLink = undefined;
     }
 }

@@ -22,7 +22,7 @@
         <div class="flex-grow-1">
             <ng-container *ngIf="this.settingsService.getSetting('activate_build_api').value">
                 <form *ngIf="buildInfo$ | async as buildInfo; else buildInfoLoading" (ngSubmit)="build()">
-                    <div *ngIf="!buildLoading" class="mb-4">
+                    <div *ngIf="!buildResultLink && !buildLoading && buildError === undefined" class="mb-4">
                         <div class="mb-2">
                             <label class="form-label" for="buildOs">OS:</label>
                             <select class="form-select" id="buildOs" [(ngModel)]="buildOs" name="os">
@@ -43,11 +43,13 @@
                         <div class="spinner-border" role="status"></div>
                         <div>Building...</div>
                     </div>
-                    <div class="mb-4 alert alert-danger py-1">
-                        Build failed 😿
-                    </div>
-                    <button type="submit" class="btn btn-success w-100 mt-2">New Build</button>
-                    <button type="submit" class="btn btn-success w-100 mt-2">Download Build</button>
+                    <ng-container *ngIf="buildError || buildResultLink">
+                        <div *ngIf="buildError" class="mb-4 alert alert-danger py-1">
+                            Build failed 😿
+                        </div>
+                        <button type="button" class="btn btn-success w-100 mt-2" (click)="newBuild()">New Build</button>
+                        <a *ngIf="!buildError" class="btn btn-success w-100 mt-2" target="_blank" [href]="buildResultLink">Download Build</a>
+                    </ng-container>
                 </form>
                 <ng-template #buildInfoLoading>
                     <div class="text-center my-2">

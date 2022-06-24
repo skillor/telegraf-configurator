@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Plugin } from '../plugin/plugin';
 import { SettingsService } from '../settings/settings.service';
 import { BuildInfo } from './build-info';
@@ -16,11 +16,14 @@ export class BuildApiService {
         private settingsService: SettingsService,
     ) { }
 
-    private getUrl(endpoint: string): string {
+    private getUrl(endpoint: string, args: {[key: string]: string} = {}): string {
         const url = new URL(
             Location.joinWithSlash(this.settingsService.getSetting('build_api_url').value, endpoint)
         );
         url.searchParams.append('api_key', this.settingsService.getSetting('build_api_key').value);
+        for (const [key, value] of Object.entries(args)) {
+            url.searchParams.append(key, value);
+        }
         return url.toString();
     }
 
@@ -38,17 +41,21 @@ export class BuildApiService {
         return plugins;
     }
 
-    build(
+    buildGetResultLink(
         os: string,
         arch: string,
         pluginList: Plugin[],
-    ): Observable<{build_id: string}> {
+    ): Observable<string> {
         const plugins = this.pluginListToTypeList(pluginList);
         return this.http.post<{build_id: string}>(this.getUrl('/build'), {
             go_os: os,
             go_arch: arch,
             plugins: plugins,
-        });
+        }).pipe(
+            map(build => this.getUrl('/download', {
+                'build_id': build.build_id
+            }))
+        );
     }
 
     getBuildInfo(): Observable<BuildInfo> {
