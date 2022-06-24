@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -16,7 +17,9 @@ export class BuildApiService {
     ) { }
 
     private getUrl(endpoint: string): string {
-        const url = new URL(this.settingsService.getSetting('build_api_url').value + endpoint);
+        const url = new URL(
+            Location.joinWithSlash(this.settingsService.getSetting('build_api_url').value, endpoint)
+        );
         url.searchParams.append('api_key', this.settingsService.getSetting('build_api_key').value);
         return url.toString();
     }
