@@ -21,13 +21,16 @@
     <button *ngIf="!addingPlugin" type="button" class="btn btn-primary mt-1" (click)="addingPlugin = true">
         Add Plugin
     </button>
-    <button *ngIf="addingPlugin" type="button" class="btn btn-danger mt-1" (click)="addingPlugin = false">
-        Cancel
-    </button>
-    <div *ngIf="addingPlugin" class="list-group">
-        <button *ngFor="let plugin of optionalPlugins" (click)="addingPlugin = false; addPlugin.emit(plugin)"
-            type="button" class="list-group-item list-group-item-action">
-            {{plugin}}
+    <ng-container *ngIf="addingPlugin">
+        <button type="button" class="btn btn-danger mt-1" (click)="addingPlugin = false">
+            Cancel
         </button>
-    </div>
+        <input type="text" class="form-control mt-1" placeholder="Search" [formControl]="searchControl" autofocus>
+        <div class="list-group">
+            <button *ngFor="let plugin of searchedOptionalPlugins" (click)="addingPlugin = false; addPlugin.emit(plugin)"
+                type="button" class="list-group-item list-group-item-action">
+                {{plugin}}
+            </button>
+        </div>
+    </ng-container>
 </div>

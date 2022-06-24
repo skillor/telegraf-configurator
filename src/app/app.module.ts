@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
 import { PluginListComponent } from './components/plugin-list/plugin-list.component';
 import { AdvancedConfigEditorComponent } from './components/advanced-config-editor/advanced-config-editor.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MonacoEditorModule, MONACO_PATH } from '@materia-ui/ngx-monaco-editor';
 import { SettingsComponent } from './pages/settings/settings.component';
 
@@ -24,6 +24,7 @@ import { SettingsComponent } from './pages/settings/settings.component';
         AppRoutingModule,
         HttpClientModule,
         FormsModule,
+        ReactiveFormsModule,
         MonacoEditorModule,
     ],
     providers: [{
