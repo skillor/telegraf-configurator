@@ -1,5 +1,7 @@
 <div class="d-flex flex-row h-100">
     <div class="sidebar overflow-auto">
+        <h4 class="text-center my-2">Plugins</h4>
+        <hr class="my-1">
         <ng-container *ngIf="pluginService.getSampleConfs() as sampleConfs; else loading">
             <app-plugin-list [mandatoryPlugins]="pluginService.getMandatoryPlugins()"
                 [optionalPlugins]="pluginService.getOptionalPlugins()"

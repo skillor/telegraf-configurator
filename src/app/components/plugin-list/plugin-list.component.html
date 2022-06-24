@@ -1,6 +1,4 @@
-<div class="d-flex h-100 flex-column">
-    <h4 class="text-center my-2">Plugins</h4>
-    <hr class="my-1">
+<div class="d-flex flex-column">
     <div class="list-group">
         <div *ngFor="let plugin of mandatoryPlugins" class="list-group-item">
             <button (click)="selectPlugin.emit(plugin)" type="button" class="btn"
