@@ -22,7 +22,7 @@
         <h4 class="text-center my-2">Build</h4>
         <hr class="my-1">
         <div class="flex-grow-1">
-            <ng-container *ngIf="this.settingsService.getSetting('activate_build_api').value">
+            <ng-container *ngIf="this.settingsService.getSetting('activate_build_api').value; else noBuildApi">
                 <form *ngIf="buildInfo$ | async as buildInfo; else buildInfoLoading" (ngSubmit)="build()">
                     <div *ngIf="!buildResultLink && !buildLoading && buildError === undefined" class="mb-4">
                         <div class="mb-2">
@@ -60,6 +60,11 @@
                     </div>
                 </ng-template>
             </ng-container>
+            <ng-template #noBuildApi>
+                <a class="btn btn-success w-100" target="_blank" href="https://portal.influxdata.com/downloads/#telegraf">
+                    Telegraf Download Page
+                </a>
+            </ng-template>
             <div>
                 <button type="button" class="btn btn-success w-100 mt-3" (click)="pluginService.downloadConfig()">Download
                     Config</button>
