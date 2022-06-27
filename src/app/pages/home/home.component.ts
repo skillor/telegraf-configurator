@@ -31,13 +31,17 @@ export class HomeComponent implements OnInit {
         if (this.settingsService.getSetting('activate_build_api').value) {
             this.buildInfo$ = this.buildApiService.getBuildInfo().pipe(
                 tap(buildInfo => {
-                    this.buildOs = buildInfo.os[0];
-                    this.buildArch = buildInfo.arch[0];
+                    this.buildOs = Object.keys(buildInfo.os)[0];
+                    this.buildArch = buildInfo.os[this.buildOs][0];
                 })
             );
         }
 
         this.pluginService.loadSampleConfs().subscribe();
+    }
+
+    changeOs(buildInfo: BuildInfo): void {
+        this.buildArch = buildInfo.os[this.buildOs][0];
     }
 
     build(): void {

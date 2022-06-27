@@ -1,4 +1,3 @@
 export interface BuildInfo {
-    os: string[],
-    arch: string[],
+    os: {[os: string]: string[]},
 }

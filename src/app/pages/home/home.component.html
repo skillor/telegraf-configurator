@@ -27,14 +27,14 @@
                     <div *ngIf="!buildResultLink && !buildLoading && buildError === undefined" class="mb-4">
                         <div class="mb-2">
                             <label class="form-label" for="buildOs">OS:</label>
-                            <select class="form-select" id="buildOs" [(ngModel)]="buildOs" name="os">
-                                <option *ngFor="let os of buildInfo.os" [value]="os">{{os}}</option>
+                            <select class="form-select" id="buildOs" [(ngModel)]="buildOs" name="os" (change)="changeOs(buildInfo)">
+                                <option *ngFor="let os of buildInfo.os | keyvalue" [value]="os.key">{{os.key}}</option>
                             </select>
                         </div>
                         <div>
                             <label class="form-label" for="buildArch">Arch:</label>
                             <select class="form-select" id="buildArch" [(ngModel)]="buildArch" name="arch">
-                                <option *ngFor="let arch of buildInfo.arch" [value]="arch">{{arch}}</option>
+                                <option *ngFor="let arch of buildInfo.os[buildOs]" [value]="arch">{{arch}}</option>
                             </select>
                         </div>
                         <div>
