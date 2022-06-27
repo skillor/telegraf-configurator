@@ -18,7 +18,7 @@ export class GithubService {
         let indexed: IndexedBlobs = {};
         for (const blob of blobs) {
             if (blob.path.startsWith(startsWith) && blob.path.endsWith(endsWith)) {
-                const path = blob.path.substring(startsWith.length, blob.path.length-endsWith.length);
+                const path = blob.path.substring(startsWith.length, blob.path.length - endsWith.length);
                 indexed[path] = blob;
             }
         }
@@ -39,11 +39,11 @@ export class GithubService {
         url: string,
         startsWith: string = '',
         endsWith: string = '',
-    ): Observable<IndexedBlobs> {
+    ): Observable<{ sha: string, blobs: IndexedBlobs }> {
         return this.http.get<GithubRepo>(url).pipe(
-            map(res => res.tree),
-            map(tree => tree.filter((item: GithubBlob) => item.type === 'blob')),
-            map(tree => this.indexBlobs(tree, startsWith, endsWith)),
+            map(res => { return { sha: res.sha, blobs: res.tree }; }),
+            map(res => { return { sha: res.sha, blobs: res.blobs.filter((item: GithubBlob) => item.type === 'blob') }; }),
+            map(res => { return { sha: res.sha, blobs: this.indexBlobs(res.blobs, startsWith, endsWith) }; }),
         );
     }
 
@@ -64,6 +64,6 @@ export class GithubService {
     }
 
     getRawContent(url: string): Observable<string> {
-        return this.http.get(url, {responseType: 'text'});
+        return this.http.get(url, { responseType: 'text' });
     }
 }

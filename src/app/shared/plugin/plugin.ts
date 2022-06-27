@@ -5,4 +5,5 @@ export interface Plugin {
     name: string,
     content: string | undefined,
     contentGetter: Observable<string>,
+    error: string | undefined,
 }

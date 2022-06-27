@@ -33,9 +33,15 @@ export class SettingsComponent implements OnInit {
         return settings;
     }
 
+    saveSetting(setting: Setting) {
+        this.settingsService.setSetting(setting.key, setting.value);
+    }
+
     saveSettings(): void {
         for (const setting of this.getSettings()) {
-            this.settingsService.setSetting(setting.key, setting.value);
+            if (setting.value !== undefined) {
+                this.settingsService.setSetting(setting.key, setting.value);
+            }
         }
         this.settingsService.saveSettings();
         this.router.navigate(['/home']);

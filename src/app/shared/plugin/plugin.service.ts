@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable,  of,  tap } from 'rxjs';
+import { catchError, map, Observable,  of,  tap } from 'rxjs';
 import { GithubService } from '../github/github.service';
 import { IndexedBlobs } from '../github/indexed-blobs';
-import { RepoInfo } from '../github/repo-info';
 import { SettingsService } from '../settings/settings.service';
 import { StorageService } from '../storage/storage.service';
 import { Plugin } from './plugin';
@@ -12,6 +11,7 @@ import { Plugin } from './plugin';
 })
 export class PluginService {
 
+    private gitSha?: string = undefined;
     private sampleConfs?: IndexedBlobs = undefined;
 
     private mandatoryPlugins: Plugin[];
@@ -33,6 +33,7 @@ export class PluginService {
                 contentGetter: this.githubService.getRawContent(
                     this.githubService.getRawUrl(this.settingsService.getRepoInfo(), 'config/agent.conf')
                 ),
+                error: undefined,
             }
         ];
 
@@ -41,22 +42,32 @@ export class PluginService {
         }
     }
 
-    loadSampleConfs(): Observable<IndexedBlobs> {
-        const sampleConfs = this.storageService.loadSampleConfs();
-        if (sampleConfs !== null) {
-            this.sampleConfs = sampleConfs;
-            return of(sampleConfs);
-        }
+    updateSampleConfs(): Observable<IndexedBlobs> {
         return this.githubService.getIndexedBlobs(
             this.githubService.getApiUrl(this.settingsService.getRepoInfo(), true),
             'plugins/',
             '/sample.conf',
         ).pipe(
-            tap(blobs => {
-                this.storageService.saveSampleConfs(blobs);
-                this.sampleConfs = blobs;
+            tap(res => {
+                this.storageService.saveSampleConfs(res.blobs);
+                this.sampleConfs = res.blobs;
+                this.storageService.saveGitSha(res.sha);
+                this.gitSha = res.sha;
             }),
+            map(res => res.blobs),
         );
+    }
+
+    loadSampleConfs(): Observable<IndexedBlobs> {
+        const gitSha = this.storageService.loadGitSha();
+        if (gitSha !== null) {
+            const sampleConfs = this.storageService.loadSampleConfs();
+            if (sampleConfs !== null) {
+                this.sampleConfs = sampleConfs;
+                return of(sampleConfs);
+            }
+        }
+        return this.updateSampleConfs();
     }
 
     getSampleConfs(): IndexedBlobs | undefined {
@@ -86,6 +97,7 @@ export class PluginService {
             id: this.selectedPluginsCounter,
             content: undefined,
             contentGetter: this.githubService.getRawContent(this.githubService.getRawUrl(this.settingsService.getRepoInfo(), this.sampleConfs![pluginName].path)),
+            error: undefined,
         };
         this.selectedPlugins[this.selectedPluginsCounter] = plugin;
         this.selectedPluginsCounter++;
@@ -99,8 +111,14 @@ export class PluginService {
 
     selectSelectedPlugin(plugin: Plugin) {
         this.selectedPlugin = plugin;
+        plugin.error = undefined;
         if (plugin.content === undefined) {
-            plugin.contentGetter.subscribe(
+            plugin.contentGetter.pipe(
+                catchError(err => {
+                    plugin.error = err;
+                    throw err;
+                })
+            ).subscribe(
                 content => plugin.content = content
             );
         }

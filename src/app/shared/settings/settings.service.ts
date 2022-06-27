@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RepoInfo } from '../github/repo-info';
+import { StorageService } from '../storage/storage.service';
 import { Setting } from './setting';
 
 @Injectable({
@@ -10,28 +11,42 @@ export class SettingsService {
     private localStoragePrefix = 'settings_';
     private settings: {[key: string]: Setting};
 
-    constructor() {
+    constructor(
+        private storageService: StorageService
+    ) {
         // default settings
-        let settings: Setting[] = [
+        const settings: Setting[] = [
             {
                 key: 'git_repo_owner',
                 title: 'Git Repo Owner',
                 value: 'influxdata',
+                change_callback: () => {
+                    this.storageService.removeGitSha();
+                },
             },
             {
                 key: 'git_repo_name',
                 title: 'Git Repo Name',
                 value: 'telegraf',
+                change_callback: () => {
+                    this.storageService.removeGitSha();
+                },
             },
             {
                 key: 'git_repo_branch',
                 title: 'Git Repo Branch',
                 value: 'master',
+                change_callback: () => {
+                    this.storageService.removeGitSha();
+                },
             },
             {
-                key: 'git_repo_branch',
-                title: 'Git Repo Branch',
-                value: 'master',
+                key: 'update_git_button',
+                title: 'Update Git',
+                value: undefined,
+                change_callback: () => {
+                    this.storageService.removeGitSha();
+                },
             },
             {
                 key: 'activate_build_api',
@@ -91,7 +106,10 @@ export class SettingsService {
     }
 
     setSetting(key: string, value: any): void {
-        this.settings[key].value = value;
+        if (this.settings[key].value === undefined || this.settings[key].value !== value) {
+            this.settings[key].value = value;
+            this.settings[key].change_callback?.(value);
+        }
     }
 
     saveSettings(): void {
@@ -101,6 +119,7 @@ export class SettingsService {
     }
 
     private saveSetting(setting: Setting): void {
+        if (setting.value === undefined) return;
         localStorage.setItem(this.getLocalStorageKey(setting.key), JSON.stringify(setting.value));
     }
 }

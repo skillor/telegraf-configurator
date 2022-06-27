@@ -12,6 +12,17 @@
                     </div>
                 </ng-container>
 
+                <ng-container *ngSwitchCase="'undefined'">
+                    <button class="btn btn-secondary" type="button" (click)="saveSetting(setting)">{{setting.title}}</button>
+                    <!-- <div class="form-check"> -->
+                        <!-- <input class="form-check-input" type="checkbox" [id]="'setting' + setting.key" -->
+                            <!-- [(ngModel)]="setting.value"> -->
+                        <!-- <label class="form-check-label user-select-none" [for]="'setting' + setting.key"> -->
+                            <!-- {{ setting.title }} -->
+                        <!-- </label> -->
+                    <!-- </div> -->
+                </ng-container>
+
                 <ng-container *ngSwitchDefault>
                     <label [for]="'setting' + setting.key" class="form-label user-select-none">{{ setting.title }}</label>
                     <input type="'text" class="form-control" [id]="'setting' + setting.key" [(ngModel)]="setting.value">

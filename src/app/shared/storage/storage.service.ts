@@ -8,6 +8,22 @@ export class StorageService {
 
     constructor() { }
 
+    saveGitSha(sha: string) {
+        localStorage.setItem('telegraf_git_sha', sha);
+    }
+
+    loadGitSha(): string | null {
+        return localStorage.getItem('telegraf_git_sha');
+    }
+
+    removeGitSha(): void {
+        localStorage.removeItem('telegraf_git_sha');
+    }
+
+    removeSampleConfs(): void {
+        localStorage.removeItem('telegraf_sample_confs');
+    }
+
     saveSampleConfs(confs: IndexedBlobs) {
         localStorage.setItem('telegraf_sample_confs', JSON.stringify(confs));
     }

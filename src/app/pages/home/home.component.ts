@@ -13,7 +13,9 @@ import { SettingsService } from 'src/app/shared/settings/settings.service';
 })
 export class HomeComponent implements OnInit {
 
+    pluginsError: undefined | Error = undefined;
     buildLoading = false;
+    buildInfoError: undefined | Error = undefined;
     buildError: undefined | Error = undefined;
     buildResultLink: undefined | string = undefined;
     buildInfo$?: Observable<BuildInfo>;
@@ -30,14 +32,23 @@ export class HomeComponent implements OnInit {
     ngOnInit(): void {
         if (this.settingsService.getSetting('activate_build_api').value) {
             this.buildInfo$ = this.buildApiService.getBuildInfo().pipe(
+                catchError(err => {
+                    this.buildInfoError = err;
+                    throw err;
+                }),
                 tap(buildInfo => {
                     this.buildOs = Object.keys(buildInfo.os)[0];
                     this.buildArch = buildInfo.os[this.buildOs][0];
-                })
+                }),
             );
         }
 
-        this.pluginService.loadSampleConfs().subscribe();
+        this.pluginService.loadSampleConfs().pipe(
+            catchError(err => {
+                this.pluginsError = err;
+                throw err;
+            })
+        ).subscribe();
     }
 
     changeOs(buildInfo: BuildInfo): void {

@@ -2,7 +2,7 @@
     <div class="sidebar overflow-auto">
         <h4 class="text-center my-2">Plugins</h4>
         <hr class="my-1">
-        <ng-container *ngIf="pluginService.getSampleConfs() as sampleConfs; else loading">
+        <ng-container *ngIf="pluginService.getSampleConfs() as sampleConfs; else pluginsLoading">
             <app-plugin-list [mandatoryPlugins]="pluginService.getMandatoryPlugins()"
                 [optionalPlugins]="pluginService.getOptionalPlugins()"
                 [selectedPlugins]="pluginService.getSelectedPlugins()"
@@ -11,8 +11,16 @@
                 (removePlugin)="pluginService.removeSelectedPlugin($event)"
                 (selectPlugin)="pluginService.selectSelectedPlugin($event)"></app-plugin-list>
         </ng-container>
-        <ng-template #loading>
-            <div class="spinner-border" role="status"></div>
+        <ng-template #pluginsLoading>
+            <div *ngIf="pluginsError" class="alert alert-danger py-1">
+                Could not load plugins,
+                <br/>
+                check your settings!
+            </div>
+            <div *ngIf="!pluginsError" class="text-center my-2">
+                <div class="spinner-border" role="status"></div>
+                <div>Loading plugins...</div>
+            </div>
         </ng-template>
     </div>
     <div class="flex-grow-1 border-start border-end border-secondary">
@@ -54,7 +62,12 @@
                     </ng-container>
                 </form>
                 <ng-template #buildInfoLoading>
-                    <div class="text-center my-2">
+                    <div *ngIf="buildInfoError" class="alert alert-danger py-1">
+                        Could not connect to Build Api,
+                        <br/>
+                        check your settings!
+                    </div>
+                    <div *ngIf="!buildInfoError" class="text-center my-2">
                         <div class="spinner-border" role="status"></div>
                         <div>Loading build info...</div>
                     </div>

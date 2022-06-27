@@ -3,4 +3,5 @@ export interface Setting {
     value: any,
     title: string,
     condition?: string,
+    change_callback?: (value: any) => void,
 }
