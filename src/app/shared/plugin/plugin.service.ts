@@ -61,6 +61,7 @@ export class PluginService {
     loadSampleConfs(): Observable<IndexedBlobs> {
         const gitSha = this.storageService.loadGitSha();
         if (gitSha !== null) {
+            this.gitSha = gitSha;
             const sampleConfs = this.storageService.loadSampleConfs();
             if (sampleConfs !== null) {
                 this.sampleConfs = sampleConfs;
@@ -68,6 +69,10 @@ export class PluginService {
             }
         }
         return this.updateSampleConfs();
+    }
+
+    getGitSha(): string | undefined {
+        return this.gitSha;
     }
 
     getSampleConfs(): IndexedBlobs | undefined {

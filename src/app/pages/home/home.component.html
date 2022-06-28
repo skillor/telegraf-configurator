@@ -31,6 +31,16 @@
         <hr class="my-1">
         <div class="flex-grow-1">
             <ng-container *ngIf="this.settingsService.getSetting('activate_build_api').value; else noBuildApi">
+                <ng-container *ngIf="buildSourceInfo$ | async as buildSourceInfo; else buildSourceInfoErrorTemp">
+                </ng-container>
+                <ng-template #buildSourceInfoErrorTemp>
+                    <div *ngIf="buildSourceInfoError" class="mb-2 alert alert-danger py-1">
+                        Something went wrong while comparing the Build Api Source Version
+                    </div>
+                    <div *ngIf="!buildSourceInfoError" class="mb-2 alert alert-info py-1">
+                        Build Api Source Version not Matching
+                    </div>
+                </ng-template>
                 <form *ngIf="buildInfo$ | async as buildInfo; else buildInfoLoading" (ngSubmit)="build()">
                     <div *ngIf="!buildResultLink && !buildLoading && buildError === undefined" class="mb-4">
                         <div class="mb-2">

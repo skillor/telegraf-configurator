@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { catchError, Observable, tap } from 'rxjs';
+import { catchError, map, Observable, tap } from 'rxjs';
 import { BuildApiService } from 'src/app/shared/build-api/build-api.service';
 import { BuildInfo } from 'src/app/shared/build-api/build-info';
-import { Plugin } from 'src/app/shared/plugin/plugin';
+import { SourceInfo } from 'src/app/shared/build-api/source-info';
 import { PluginService } from 'src/app/shared/plugin/plugin.service';
 import { SettingsService } from 'src/app/shared/settings/settings.service';
 
@@ -16,9 +16,11 @@ export class HomeComponent implements OnInit {
     pluginsError: undefined | Error = undefined;
     buildLoading = false;
     buildInfoError: undefined | Error = undefined;
+    buildSourceInfoError: undefined | Error = undefined;
     buildError: undefined | Error = undefined;
     buildResultLink: undefined | string = undefined;
     buildInfo$?: Observable<BuildInfo>;
+    buildSourceInfo$?: Observable<boolean>;
     buildOs = '';
     buildArch = '';
 
@@ -39,6 +41,16 @@ export class HomeComponent implements OnInit {
                 tap(buildInfo => {
                     this.buildOs = Object.keys(buildInfo.os)[0];
                     this.buildArch = buildInfo.os[this.buildOs][0];
+                }),
+            );
+
+            this.buildSourceInfo$ = this.buildApiService.getSourceInfo().pipe(
+                catchError(err => {
+                    this.buildSourceInfoError = err;
+                    throw err;
+                }),
+                map((sourceInfo: SourceInfo) => {
+                    return sourceInfo.head === this.pluginService.getGitSha()!;
                 }),
             );
         }

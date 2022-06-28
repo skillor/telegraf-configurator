@@ -5,6 +5,7 @@ import { map, Observable } from 'rxjs';
 import { Plugin } from '../plugin/plugin';
 import { SettingsService } from '../settings/settings.service';
 import { BuildInfo } from './build-info';
+import { SourceInfo } from './source-info';
 
 @Injectable({
     providedIn: 'root'
@@ -60,5 +61,9 @@ export class BuildApiService {
 
     getBuildInfo(): Observable<BuildInfo> {
         return this.http.get<BuildInfo>(this.getUrl('/build-info'));
+    }
+
+    getSourceInfo(): Observable<SourceInfo> {
+        return this.http.get<SourceInfo>(this.getUrl('/source-info'));
     }
 }
