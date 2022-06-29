@@ -84,14 +84,17 @@ export class SettingsComponent implements OnInit {
                 if (!e.target || !e.target.result) {
                     return onEnd();
                 }
-                const content = e.target.result as string;
+                let content: string;
+                if (typeof e.target.result === 'string') {
+                    content = e.target.result;
+                } else {
+                    content = new TextDecoder().decode(e.target.result);
+                }
+
                 try {
                     for (const [key, value] of Object.entries(JSON.parse(content))) {
                         if (key in this.settings && typeof this.settings[key].value === typeof value) {
                             this.settings[key].value = value;
-                            // (this.settings as any)[key].value = value;
-                            // this.save_setting(key, value, false, false, loadingSubject, false);
-                            // updateCount++;
                         } else {
                             console.warn('unknown key or type mismatch', key, value);
                         }
