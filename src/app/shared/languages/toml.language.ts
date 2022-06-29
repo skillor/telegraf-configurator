@@ -9,10 +9,10 @@ export const tomlLanguage: Language = {
         root: [
             // sections
             // [/^\[[^\]]*\]/, 'metatag'],
-            [/^\[+[^\]]*\]+/, 'metatag'],
+            [/(^\w*)^\[+[^\]]*\]+/, 'metatag'],
 
             // keys
-            [/(^\w+)(\s*)(\=)/, ['key', '', 'delimiter']],
+            [/(^[\w-]+)(\s*)(\=)/, ['key', '', 'delimiter']],
 
             // whitespace
             { include: '@whitespace' },
