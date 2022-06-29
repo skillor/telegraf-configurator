@@ -104,17 +104,17 @@ export class PluginService {
         return this.selectedPlugin;
     }
 
-    addSelectedPlugin(pluginName: string) {
+    addSelectedPlugin(pluginName: string, content: string | undefined = undefined, select: boolean = true) {
         const plugin = {
             name: pluginName,
             id: this.selectedPluginsCounter,
-            content: undefined,
+            content: content,
             contentPath: this.sampleConfs![pluginName].path,
             error: undefined,
         };
         this.selectedPlugins[this.selectedPluginsCounter] = plugin;
         this.selectedPluginsCounter++;
-        this.selectSelectedPlugin(plugin);
+        if (select) this.selectSelectedPlugin(plugin);
     }
 
     removeSelectedPlugin(plugin: Plugin) {
@@ -140,6 +140,19 @@ export class PluginService {
             ).subscribe(
                 content => plugin.content = content
             );
+        }
+    }
+
+    load(plugins: {[key: string]: string}) {
+        const pluginNames = Object.keys(plugins);
+        const availablePlugins = this.getOptionalPlugins();
+        if (availablePlugins === undefined || pluginNames.length === 0) return;
+        for (const plugin of pluginNames) {
+            if (!availablePlugins.includes(plugin)) {
+                console.warn('Plugin: \"' + plugin + ' was not found, skipping...');
+            } else {
+                this.addSelectedPlugin(plugin, atob(plugins[plugin]), false);
+            }
         }
     }
 
