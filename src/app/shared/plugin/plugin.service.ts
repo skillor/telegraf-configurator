@@ -31,7 +31,7 @@ export class PluginService {
                 id: 1,
                 name: 'agent',
                 content: undefined,
-                contentPath: 'config/agent.conf',
+                contentPath: 'config/printer/agent.conf',
                 error: undefined,
             }
         ];
