@@ -8,8 +8,7 @@ export const tomlLanguage: Language = {
     tokenizer: {
         root: [
             // sections
-            // [/^\[[^\]]*\]/, 'metatag'],
-            [/(^\w*)^\[+[^\]]*\]+/, 'metatag'],
+            [/^(\s*)\[+[^\]]*\]+/, 'metatag'],
 
             // keys
             [/(^[\w-]+)(\s*)(\=)/, ['key', '', 'delimiter']],
