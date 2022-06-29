@@ -9,7 +9,13 @@ import { Setting } from './setting';
 export class SettingsService {
 
     private localStoragePrefix = 'settings_';
-    private settings: {[key: string]: Setting};
+    private settings: { [key: string]: Setting };
+
+    private possibleThemes: { [key: string]: { vs: string, daisy: string } } = {
+        light: { vs: 'vs', daisy: 'light' },
+        dark: { vs: 'vs-dark', daisy: 'dark' }
+    };
+    private theme: string = Object.keys(this.possibleThemes)[0];
 
     constructor(
         private storageService: StorageService
@@ -95,6 +101,26 @@ export class SettingsService {
         for (const setting of Object.values(this.settings)) {
             this.loadSetting(setting);
         }
+    }
+
+    getPossibleThemes(): string[] {
+        return Object.keys(this.possibleThemes);
+    }
+
+    setTheme(theme: string): void {
+        if (Object.keys(this.possibleThemes).includes(theme)) this.theme = theme;
+    }
+
+    getTheme(): string {
+        return this.theme;
+    }
+
+    getVsTheme(): string {
+        return this.possibleThemes[this.theme].vs;
+    }
+
+    getDaisyTheme(): string {
+        return this.possibleThemes[this.theme].daisy;
     }
 
     getSetting(key: string): Setting {

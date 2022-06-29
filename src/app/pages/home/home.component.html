@@ -1,7 +1,8 @@
-<div class="d-flex flex-row h-100">
+<div class="flex flex-row h-full">
     <div class="sidebar overflow-auto">
-        <h4 class="text-center my-2">Plugins</h4>
-        <hr class="my-1">
+        <h4 class="text-center mt-2">Plugins</h4>
+        <div class="divider"></div>
+        <!-- <hr class="my-1"> -->
         <app-plugin-list [mandatoryPlugins]="pluginService.getMandatoryPlugins()"
             [optionalPlugins]="pluginService.getOptionalPlugins()"
             [selectedPlugins]="pluginService.getSelectedPlugins()"
@@ -10,18 +11,18 @@
             (removePlugin)="pluginService.removeSelectedPlugin($event)"
             (selectPlugin)="pluginService.selectSelectedPlugin($event)"></app-plugin-list>
     </div>
-    <div class="flex-grow-1 border-start border-end border-secondary">
+    <div class="grow main-editor">
         <app-advanced-config-editor [plugin]="pluginService.getSelectedPlugin()"></app-advanced-config-editor>
     </div>
-    <div class="d-flex flex-column sidebar">
+    <div class="flex flex-col sidebar">
         <h4 class="text-center my-2">Build</h4>
         <hr class="my-1">
-        <div class="flex-grow-1">
+        <div class="grow">
             <ng-container *ngIf="this.settingsService.getSetting('activate_build_api').value; else noBuildApi">
                 <ng-container *ngIf="buildSourceInfo$ | async as buildSourceInfo; else buildSourceInfoErrorTemp">
                 </ng-container>
                 <ng-template #buildSourceInfoErrorTemp>
-                    <div *ngIf="!buildInfoError && buildSourceInfoError" class="mb-2 alert alert-danger py-1">
+                    <div *ngIf="!buildInfoError && buildSourceInfoError" class="mb-2 alert alert-error py-1">
                         Something went wrong while comparing the Build Api Source Version
                     </div>
                     <div *ngIf="!buildSourceInfoError" class="mb-2 alert alert-info py-1">
@@ -44,7 +45,7 @@
                             </select>
                         </div>
                         <div>
-                            <button type="submit" class="btn btn-success w-100 mt-2">Build</button>
+                            <button type="submit" class="btn btn-success w-full mt-2">Build</button>
                         </div>
                     </div>
                     <div *ngIf="buildLoading" class="text-center my-2">
@@ -52,16 +53,16 @@
                         <div>Building...</div>
                     </div>
                     <ng-container *ngIf="buildError || buildResultLink">
-                        <div *ngIf="buildError" class="mb-4 alert alert-danger py-1">
+                        <div *ngIf="buildError" class="mb-4 alert alert-error py-1">
                             Build failed 😿
                         </div>
-                        <button type="button" class="btn btn-success w-100 mt-2" (click)="newBuild()">New Build</button>
-                        <a *ngIf="!buildError" class="btn btn-success w-100 mt-2" target="_blank"
+                        <button type="button" class="btn btn-success w-full mt-2" (click)="newBuild()">New Build</button>
+                        <a *ngIf="!buildError" class="btn btn-success w-full mt-2" target="_blank"
                             [href]="buildResultLink">Download Build</a>
                     </ng-container>
                 </form>
                 <ng-template #buildInfoLoading>
-                    <div *ngIf="buildInfoError" class="alert alert-danger py-1">
+                    <div *ngIf="buildInfoError" class="alert alert-error py-1">
                         Could not connect to Build Api,
                         <br />
                         check your settings!
@@ -73,19 +74,19 @@
                 </ng-template>
             </ng-container>
             <ng-template #noBuildApi>
-                <a class="btn btn-success w-100" target="_blank"
+                <a class="btn btn-success w-full" target="_blank"
                     href="https://portal.influxdata.com/downloads/#telegraf">
                     Telegraf Download Page
                 </a>
             </ng-template>
             <div>
-                <button type="button" class="btn btn-success w-100 mt-3"
+                <button type="button" class="btn btn-success w-full mt-3"
                     (click)="pluginService.downloadConfig()">Download
                     Config</button>
             </div>
         </div>
         <div>
-            <a routerLink="/settings" class="btn btn-secondary w-100">Settings</a>
+            <a routerLink="/settings" class="btn btn-secondary w-full">Settings</a>
         </div>
     </div>
 </div>

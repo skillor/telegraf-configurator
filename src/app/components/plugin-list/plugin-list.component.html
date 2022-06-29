@@ -12,7 +12,7 @@
                     [ngClass]="plugin === selectedPlugin ? 'btn-secondary' : 'btn-outline-secondary'">
                     {{ plugin.name }}
                 </button>
-                <button (click)="removePlugin.emit(plugin)" type="button" class="btn btn-danger">-</button>
+                <button (click)="removePlugin.emit(plugin)" type="button" class="btn btn-error">-</button>
             </div>
         </div>
     </div>
@@ -20,7 +20,7 @@
         Add Plugin
     </button>
     <ng-container *ngIf="addingPlugin">
-        <button type="button" class="btn btn-danger mt-1" (click)="addingPlugin = false">
+        <button type="button" class="btn btn-error mt-1" (click)="addingPlugin = false">
             Cancel
         </button>
         <input type="text" class="form-control mt-1" placeholder="Search" [formControl]="searchControl" autofocus>

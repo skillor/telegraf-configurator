@@ -4,7 +4,7 @@
 <ng-template #loading>
     <ngx-monaco-editor class="d-none" [options]="editorOptions"></ngx-monaco-editor>
     <ng-container *ngIf="plugin">
-        <div *ngIf="plugin.error" class="alert alert-danger py-1">
+        <div *ngIf="plugin.error" class="alert alert-error py-1">
             Could not load plugin,
             <br/>
             check your settings!
