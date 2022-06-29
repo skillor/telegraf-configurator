@@ -29,7 +29,11 @@
                 </ng-container>
             </ng-container>
         </div>
-        <div class="row mt-4 gap-3">
+        <div class="row mt-3 gap-3">
+            <button type="button" class="col btn btn-danger w-100" (click)="importSettings()">Import Settings</button>
+            <button type="button" class="col btn btn-secondary w-100" (click)="exportSettings()">Export Settings</button>
+        </div>
+        <div class="row mt-3 gap-3">
             <a routerLink="/home" class="col btn btn-secondary w-100">Cancel</a>
             <button type="button" class="col btn btn-success w-100" (click)="saveSettings()">Save</button>
         </div>
