@@ -3,6 +3,7 @@ import { MonacoEditorConstructionOptions, MonacoEditorLoaderService } from '@mat
 import { filter, take } from 'rxjs';
 import { tomlLanguage } from 'src/app/shared/languages/toml.language';
 import { Plugin } from 'src/app/shared/plugin/plugin';
+import { SettingsService } from 'src/app/shared/settings/settings.service';
 
 @Component({
     selector: 'app-advanced-config-editor',
@@ -11,7 +12,6 @@ import { Plugin } from 'src/app/shared/plugin/plugin';
 })
 export class AdvancedConfigEditorComponent implements OnInit {
     editorOptions: MonacoEditorConstructionOptions = {
-        theme: 'vs-dark',
         language: 'toml',
         minimap: {enabled: false},
     };
@@ -19,7 +19,12 @@ export class AdvancedConfigEditorComponent implements OnInit {
     @Input()
     plugin?: Plugin;
 
-    constructor(private monacoLoaderService: MonacoEditorLoaderService) {
+    constructor(
+        private monacoLoaderService: MonacoEditorLoaderService,
+        private settingsService: SettingsService,
+    ) {
+        this.editorOptions.theme = this.settingsService.getVsTheme();
+
         this.monacoLoaderService.isMonacoLoaded$.pipe(
             filter(isLoaded => isLoaded),
             take(1),

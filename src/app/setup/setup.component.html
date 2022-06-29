@@ -1,9 +1,8 @@
 
-<div *ngIf="pluginService.getSampleConfsError()" class="alert alert-danger">
+<div *ngIf="pluginService.getSampleConfsError()" class="alert alert-error">
     Could not load plugins, check your settings!
     <a class="btn btn-secondary" routerLink="/settings">Settings</a>
 </div>
 <div *ngIf="!pluginService.getSampleConfsError()" class="text-center">
-    <div class="spinner-border" role="status"></div>
-    <div>Loading...</div>
+    <div class="btn loading">Loading...</div>
 </div>

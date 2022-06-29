@@ -9,7 +9,12 @@ import { Setting } from './setting';
 export class SettingsService {
 
     private localStoragePrefix = 'settings_';
-    private settings: {[key: string]: Setting};
+    private settings: { [key: string]: Setting };
+
+    private possibleThemes: { [key: string]: { vs: string, daisy: string } } = {
+        light: { vs: 'vs', daisy: 'light' },
+        dark: { vs: 'vs-dark', daisy: 'dark' }
+    };
 
     constructor(
         private storageService: StorageService
@@ -17,7 +22,15 @@ export class SettingsService {
         // default settings
         const settings: Setting[] = [
             {
+                key: 'theme_style',
+                type: 'select',
+                title: 'Theme',
+                value: Object.keys(this.possibleThemes)[0],
+                options: Object.keys(this.possibleThemes),
+            },
+            {
                 key: 'git_repo_owner',
+                type: 'text',
                 title: 'Git Repo Owner',
                 value: 'influxdata',
                 change_callback: () => {
@@ -26,6 +39,7 @@ export class SettingsService {
             },
             {
                 key: 'git_repo_name',
+                type: 'text',
                 title: 'Git Repo Name',
                 value: 'telegraf',
                 change_callback: () => {
@@ -34,6 +48,7 @@ export class SettingsService {
             },
             {
                 key: 'git_repo_branch',
+                type: 'text',
                 title: 'Git Repo Branch',
                 value: 'master',
                 change_callback: () => {
@@ -42,6 +57,7 @@ export class SettingsService {
             },
             {
                 key: 'update_git_button',
+                type: 'button',
                 title: 'Update Git',
                 value: undefined,
                 change_callback: () => {
@@ -50,17 +66,20 @@ export class SettingsService {
             },
             {
                 key: 'activate_build_api',
+                type: 'checkbox',
                 title: 'Activate Telegraf Build Api',
                 value: false,
             },
             {
                 key: 'build_api_url',
+                type: 'text',
                 title: 'Telegraf Build Api Url',
                 value: 'http://127.0.0.1:8000',
                 condition: 'activate_build_api',
             },
             {
                 key: 'build_api_key',
+                type: 'text',
                 title: 'Telegraf Build Api Key',
                 value: '',
                 condition: 'activate_build_api',
@@ -95,6 +114,22 @@ export class SettingsService {
         for (const setting of Object.values(this.settings)) {
             this.loadSetting(setting);
         }
+    }
+
+    getPossibleThemes(): string[] {
+        return Object.keys(this.possibleThemes);
+    }
+
+    getTheme(): string {
+        return this.getSetting('theme_style').value;
+    }
+
+    getVsTheme(): string {
+        return this.possibleThemes[this.getTheme()].vs;
+    }
+
+    getDaisyTheme(): string {
+        return this.possibleThemes[this.getTheme()].daisy;
     }
 
     getSetting(key: string): Setting {

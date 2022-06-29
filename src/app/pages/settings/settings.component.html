@@ -1,41 +1,46 @@
-<div class="d-flex justify-content-center py-5">
-    <div class="settings-panel w-100">
+<div class="flex justify-center py-5">
+    <div class="settings-panel w-full">
         <div *ngFor="let setting of getSettings()" class="my-2">
-            <ng-container *ngIf="!setting.condition || settings[setting.condition].value" [ngSwitch]="typeOf(setting.value)">
-                <ng-container *ngSwitchCase="'boolean'">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" [id]="'setting' + setting.key"
-                            [(ngModel)]="setting.value">
-                        <label class="form-check-label user-select-none" [for]="'setting' + setting.key">
-                            {{ setting.title }}
+            <ng-container *ngIf="!setting.condition || settings[setting.condition].value" [ngSwitch]="setting.type">
+                <ng-container *ngSwitchCase="'checkbox'">
+                    <div class="form-control w-fit">
+                        <label class="label cursor-pointer shrink">
+                            <input type="checkbox" class="checkbox mr-2" [(ngModel)]="setting.value"/>
+                            <span class="label-text">{{ setting.title }}</span>
                         </label>
                     </div>
                 </ng-container>
 
-                <ng-container *ngSwitchCase="'undefined'">
+                <ng-container *ngSwitchCase="'button'">
                     <button class="btn btn-secondary" type="button" (click)="saveSetting(setting)">{{setting.title}}</button>
-                    <!-- <div class="form-check"> -->
-                        <!-- <input class="form-check-input" type="checkbox" [id]="'setting' + setting.key" -->
-                            <!-- [(ngModel)]="setting.value"> -->
-                        <!-- <label class="form-check-label user-select-none" [for]="'setting' + setting.key"> -->
-                            <!-- {{ setting.title }} -->
-                        <!-- </label> -->
-                    <!-- </div> -->
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'select'">
+                    <div class="form-control w-full">
+                        <label class="label select-none">
+                            <span class="label-text">{{setting.title}}</span>
+                        </label>
+                        <select class="select select-bordered" [(ngModel)]="setting.value">
+                            <option *ngFor="let option of setting.options">{{option}}</option>
+                        </select>
+                    </div>
                 </ng-container>
 
                 <ng-container *ngSwitchDefault>
-                    <label [for]="'setting' + setting.key" class="form-label user-select-none">{{ setting.title }}</label>
-                    <input type="'text" class="form-control" [id]="'setting' + setting.key" [(ngModel)]="setting.value">
+                    <div class="form-control w-full">
+                        <label class="label select-none">
+                          <span class="label-text">{{ setting.title }}</span>
+                        </label>
+                        <input type="text" class="input input-bordered w-full" [id]="'setting' + setting.key" [(ngModel)]="setting.value">
+                    </div>
                 </ng-container>
             </ng-container>
         </div>
-        <div class="row mt-3 gap-3">
-            <button type="button" class="col btn btn-danger w-100" (click)="importSettings()">Import Settings</button>
-            <button type="button" class="col btn btn-secondary w-100" (click)="exportSettings()">Export Settings</button>
-        </div>
-        <div class="row mt-3 gap-3">
-            <a routerLink="/home" class="col btn btn-secondary w-100">Cancel</a>
-            <button type="button" class="col btn btn-success w-100" (click)="saveSettings()">Save</button>
+        <div class="mt-4 grid gap-3 grid-cols-2">
+            <button type="button" class="btn btn-error" (click)="importSettings()">Import Settings</button>
+            <button type="button" class="btn btn-secondary" (click)="exportSettings()">Export Settings</button>
+            <a routerLink="/home" class="btn btn-secondary">Cancel</a>
+            <button type="button" class="btn btn-success" (click)="saveSettings()">Save</button>
         </div>
     </div>
 </div>
