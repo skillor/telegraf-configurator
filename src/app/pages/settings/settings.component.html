@@ -1,8 +1,8 @@
 <div class="flex justify-center py-5">
     <div class="settings-panel w-full">
         <div *ngFor="let setting of getSettings()" class="my-2">
-            <ng-container *ngIf="!setting.condition || settings[setting.condition].value" [ngSwitch]="typeOf(setting.value)">
-                <ng-container *ngSwitchCase="'boolean'">
+            <ng-container *ngIf="!setting.condition || settings[setting.condition].value" [ngSwitch]="setting.type">
+                <ng-container *ngSwitchCase="'checkbox'">
                     <div class="form-control w-fit">
                         <label class="label cursor-pointer shrink">
                             <input type="checkbox" class="checkbox mr-2" [(ngModel)]="setting.value"/>
@@ -11,8 +11,19 @@
                     </div>
                 </ng-container>
 
-                <ng-container *ngSwitchCase="'undefined'">
+                <ng-container *ngSwitchCase="'button'">
                     <button class="btn btn-secondary" type="button" (click)="saveSetting(setting)">{{setting.title}}</button>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'select'">
+                    <div class="form-control w-full">
+                        <label class="label select-none">
+                            <span class="label-text">{{setting.title}}</span>
+                        </label>
+                        <select class="select select-bordered" [(ngModel)]="setting.value">
+                            <option *ngFor="let option of setting.options">{{option}}</option>
+                        </select>
+                    </div>
                 </ng-container>
 
                 <ng-container *ngSwitchDefault>
