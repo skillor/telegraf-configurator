@@ -2,26 +2,13 @@
     <div class="sidebar overflow-auto">
         <h4 class="text-center my-2">Plugins</h4>
         <hr class="my-1">
-        <ng-container *ngIf="pluginService.getSampleConfs() as sampleConfs; else pluginsLoading">
-            <app-plugin-list [mandatoryPlugins]="pluginService.getMandatoryPlugins()"
-                [optionalPlugins]="pluginService.getOptionalPlugins()"
-                [selectedPlugins]="pluginService.getSelectedPlugins()"
-                [selectedPlugin]="pluginService.getSelectedPlugin()"
-                (addPlugin)="pluginService.addSelectedPlugin($event)"
-                (removePlugin)="pluginService.removeSelectedPlugin($event)"
-                (selectPlugin)="pluginService.selectSelectedPlugin($event)"></app-plugin-list>
-        </ng-container>
-        <ng-template #pluginsLoading>
-            <div *ngIf="pluginsError" class="alert alert-danger py-1">
-                Could not load plugins,
-                <br/>
-                check your settings!
-            </div>
-            <div *ngIf="!pluginsError" class="text-center my-2">
-                <div class="spinner-border" role="status"></div>
-                <div>Loading plugins...</div>
-            </div>
-        </ng-template>
+        <app-plugin-list [mandatoryPlugins]="pluginService.getMandatoryPlugins()"
+            [optionalPlugins]="pluginService.getOptionalPlugins()"
+            [selectedPlugins]="pluginService.getSelectedPlugins()"
+            [selectedPlugin]="pluginService.getSelectedPlugin()"
+            (addPlugin)="pluginService.addSelectedPlugin($event)"
+            (removePlugin)="pluginService.removeSelectedPlugin($event)"
+            (selectPlugin)="pluginService.selectSelectedPlugin($event)"></app-plugin-list>
     </div>
     <div class="flex-grow-1 border-start border-end border-secondary">
         <app-advanced-config-editor [plugin]="pluginService.getSelectedPlugin()"></app-advanced-config-editor>
@@ -34,7 +21,7 @@
                 <ng-container *ngIf="buildSourceInfo$ | async as buildSourceInfo; else buildSourceInfoErrorTemp">
                 </ng-container>
                 <ng-template #buildSourceInfoErrorTemp>
-                    <div *ngIf="buildSourceInfoError" class="mb-2 alert alert-danger py-1">
+                    <div *ngIf="!buildInfoError && buildSourceInfoError" class="mb-2 alert alert-danger py-1">
                         Something went wrong while comparing the Build Api Source Version
                     </div>
                     <div *ngIf="!buildSourceInfoError" class="mb-2 alert alert-info py-1">
@@ -45,7 +32,8 @@
                     <div *ngIf="!buildResultLink && !buildLoading && buildError === undefined" class="mb-4">
                         <div class="mb-2">
                             <label class="form-label" for="buildOs">OS:</label>
-                            <select class="form-select" id="buildOs" [(ngModel)]="buildOs" name="os" (change)="changeOs(buildInfo)">
+                            <select class="form-select" id="buildOs" [(ngModel)]="buildOs" name="os"
+                                (change)="changeOs(buildInfo)">
                                 <option *ngFor="let os of buildInfo.os | keyvalue" [value]="os.key">{{os.key}}</option>
                             </select>
                         </div>
@@ -68,13 +56,14 @@
                             Build failed 😿
                         </div>
                         <button type="button" class="btn btn-success w-100 mt-2" (click)="newBuild()">New Build</button>
-                        <a *ngIf="!buildError" class="btn btn-success w-100 mt-2" target="_blank" [href]="buildResultLink">Download Build</a>
+                        <a *ngIf="!buildError" class="btn btn-success w-100 mt-2" target="_blank"
+                            [href]="buildResultLink">Download Build</a>
                     </ng-container>
                 </form>
                 <ng-template #buildInfoLoading>
                     <div *ngIf="buildInfoError" class="alert alert-danger py-1">
                         Could not connect to Build Api,
-                        <br/>
+                        <br />
                         check your settings!
                     </div>
                     <div *ngIf="!buildInfoError" class="text-center my-2">
@@ -84,12 +73,14 @@
                 </ng-template>
             </ng-container>
             <ng-template #noBuildApi>
-                <a class="btn btn-success w-100" target="_blank" href="https://portal.influxdata.com/downloads/#telegraf">
+                <a class="btn btn-success w-100" target="_blank"
+                    href="https://portal.influxdata.com/downloads/#telegraf">
                     Telegraf Download Page
                 </a>
             </ng-template>
             <div>
-                <button type="button" class="btn btn-success w-100 mt-3" (click)="pluginService.downloadConfig()">Download
+                <button type="button" class="btn btn-success w-100 mt-3"
+                    (click)="pluginService.downloadConfig()">Download
                     Config</button>
             </div>
         </div>

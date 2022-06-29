@@ -12,6 +12,7 @@ import { Plugin } from './plugin';
 export class PluginService {
 
     private gitSha?: string = undefined;
+    private sampleConfsError: undefined | Error = undefined;
     private sampleConfs?: IndexedBlobs = undefined;
 
     private mandatoryPlugins: Plugin[];
@@ -30,9 +31,7 @@ export class PluginService {
                 id: 1,
                 name: 'agent',
                 content: undefined,
-                contentGetter: this.githubService.getRawContent(
-                    this.githubService.getRawUrl(this.settingsService.getRepoInfo(), 'config/agent.conf')
-                ),
+                contentPath: 'config/agent.conf',
                 error: undefined,
             }
         ];
@@ -43,11 +42,16 @@ export class PluginService {
     }
 
     updateSampleConfs(): Observable<IndexedBlobs> {
+        this.sampleConfsError = undefined;
         return this.githubService.getIndexedBlobs(
             this.githubService.getApiUrl(this.settingsService.getRepoInfo(), true),
             'plugins/',
             '/sample.conf',
         ).pipe(
+            catchError(err => {
+                this.sampleConfsError = err;
+                throw err;
+            }),
             tap(res => {
                 this.storageService.saveSampleConfs(res.blobs);
                 this.sampleConfs = res.blobs;
@@ -69,6 +73,10 @@ export class PluginService {
             }
         }
         return this.updateSampleConfs();
+    }
+
+    getSampleConfsError(): Error | undefined {
+        return this.sampleConfsError;
     }
 
     getGitSha(): string | undefined {
@@ -101,7 +109,7 @@ export class PluginService {
             name: pluginName,
             id: this.selectedPluginsCounter,
             content: undefined,
-            contentGetter: this.githubService.getRawContent(this.githubService.getRawUrl(this.settingsService.getRepoInfo(), this.sampleConfs![pluginName].path)),
+            contentPath: this.sampleConfs![pluginName].path,
             error: undefined,
         };
         this.selectedPlugins[this.selectedPluginsCounter] = plugin;
@@ -114,11 +122,17 @@ export class PluginService {
         delete this.selectedPlugins[plugin.id];
     }
 
+    validateSelectedPlugin() {
+        if (this.selectedPlugin && this.selectedPlugin.error) {
+            this.selectSelectedPlugin(this.selectedPlugin);
+        }
+    }
+
     selectSelectedPlugin(plugin: Plugin) {
         this.selectedPlugin = plugin;
         plugin.error = undefined;
         if (plugin.content === undefined) {
-            plugin.contentGetter.pipe(
+            this.githubService.getRawContent(this.githubService.getRawUrl(this.settingsService.getRepoInfo(), plugin.contentPath)).pipe(
                 catchError(err => {
                     plugin.error = err;
                     throw err;

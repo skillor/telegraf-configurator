@@ -10,6 +10,7 @@ import { AdvancedConfigEditorComponent } from './components/advanced-config-edit
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MonacoEditorModule, MONACO_PATH } from '@materia-ui/ngx-monaco-editor';
 import { SettingsComponent } from './pages/settings/settings.component';
+import { SetupComponent } from './setup/setup.component';
 
 @NgModule({
     declarations: [
@@ -18,6 +19,7 @@ import { SettingsComponent } from './pages/settings/settings.component';
         PluginListComponent,
         AdvancedConfigEditorComponent,
         SettingsComponent,
+        SetupComponent,
     ],
     imports: [
         BrowserModule,

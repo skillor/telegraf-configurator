@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { catchError, map, Observable, tap } from 'rxjs';
 import { BuildApiService } from 'src/app/shared/build-api/build-api.service';
 import { BuildInfo } from 'src/app/shared/build-api/build-info';
@@ -13,7 +14,6 @@ import { SettingsService } from 'src/app/shared/settings/settings.service';
 })
 export class HomeComponent implements OnInit {
 
-    pluginsError: undefined | Error = undefined;
     buildLoading = false;
     buildInfoError: undefined | Error = undefined;
     buildSourceInfoError: undefined | Error = undefined;
@@ -25,6 +25,7 @@ export class HomeComponent implements OnInit {
     buildArch = '';
 
     constructor(
+        private router: Router,
         public pluginService: PluginService,
         public buildApiService: BuildApiService,
         public settingsService: SettingsService,
@@ -32,6 +33,13 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        if (this.pluginService.getSampleConfs() === undefined) {
+            this.router.navigate(['setup']);
+            return;
+        }
+
+        this.pluginService.validateSelectedPlugin();
+
         if (this.settingsService.getSetting('activate_build_api').value) {
             this.buildInfo$ = this.buildApiService.getBuildInfo().pipe(
                 catchError(err => {
@@ -54,13 +62,6 @@ export class HomeComponent implements OnInit {
                 }),
             );
         }
-
-        this.pluginService.loadSampleConfs().pipe(
-            catchError(err => {
-                this.pluginsError = err;
-                throw err;
-            })
-        ).subscribe();
     }
 
     changeOs(buildInfo: BuildInfo): void {
