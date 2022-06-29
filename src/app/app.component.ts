@@ -12,6 +12,6 @@ export class AppComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.settingsService.setTheme('dark');
+        // this.settingsService.setTheme('dark');
     }
 }

@@ -2,7 +2,6 @@
     <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="plugin.content"></ngx-monaco-editor>
 </ng-container>
 <ng-template #loading>
-    <ngx-monaco-editor class="d-none" [options]="editorOptions"></ngx-monaco-editor>
     <ng-container *ngIf="plugin">
         <div *ngIf="plugin.error" class="alert alert-error py-1">
             Could not load plugin,
@@ -10,8 +9,7 @@
             check your settings!
         </div>
         <div *ngIf="!plugin.error" class="text-center my-2">
-            <div class="spinner-border" role="status"></div>
-            <div>Loading plugin...</div>
+            <div class="btn loading">Loading plugin...</div>
         </div>
     </ng-container>
 </ng-template>

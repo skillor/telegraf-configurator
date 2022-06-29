@@ -51,8 +51,7 @@
                         </div>
                     </div>
                     <div *ngIf="buildLoading" class="text-center my-2">
-                        <div class="spinner-border" role="status"></div>
-                        <div>Building...</div>
+                        <div class="btn loading">Building...</div>
                     </div>
                     <ng-container *ngIf="buildError || buildResultLink">
                         <div *ngIf="buildError" class="mb-4 alert alert-error py-1">
@@ -70,8 +69,7 @@
                         check your settings!
                     </div>
                     <div *ngIf="!buildInfoError" class="text-center my-2">
-                        <div class="spinner-border" role="status"></div>
-                        <div>Loading build info...</div>
+                        <div class="btn loading">Loading build info...</div>
                     </div>
                 </ng-template>
             </ng-container>
