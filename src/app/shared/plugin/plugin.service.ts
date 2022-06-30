@@ -41,6 +41,14 @@ export class PluginService {
         }
     }
 
+    resetPlugins(): void {
+        this.selectedPlugins = {};
+        this.selectedPluginsCounter = 0;
+        if (!this.mandatoryPlugins.includes(this.selectedPlugin!)) {
+            this.selectedPlugin = undefined;
+        }
+    }
+
     updateSampleConfs(): Observable<IndexedBlobs> {
         this.sampleConfsError = undefined;
         return this.githubService.getIndexedBlobs(
@@ -143,16 +151,34 @@ export class PluginService {
         }
     }
 
-    load(plugins: {[key: string]: string}) {
-        const pluginNames = Object.keys(plugins);
-        const availablePlugins = this.getOptionalPlugins();
-        if (availablePlugins === undefined || pluginNames.length === 0) return;
-        for (const plugin of pluginNames) {
-            if (!availablePlugins.includes(plugin)) {
-                console.warn('Plugin: \"' + plugin + ' was not found, skipping...');
-            } else {
-                this.addSelectedPlugin(plugin, atob(plugins[plugin]), false);
+    setPlugin(pluginName: string, pluginContent: string) {
+        const mandatoryPlugins = this.getMandatoryPlugins();
+        if (mandatoryPlugins !== undefined) {
+            for (const plugin of mandatoryPlugins) {
+                if (pluginName === plugin.name) {
+                    plugin.content = pluginContent;
+                    return;
+                }
             }
+        }
+
+
+        const optionalPlugins = this.getOptionalPlugins();
+        if (optionalPlugins !== undefined) {
+            if (!optionalPlugins.includes(pluginName)) {
+                console.warn('Plugin: "' + pluginName + '" was not found, skipping...');
+                return;
+            }
+            this.addSelectedPlugin(pluginName, pluginContent, false);
+        }
+    }
+
+    load(plugins: {[key: string]: string}) {
+        this.resetPlugins();
+        const pluginNames = Object.keys(plugins);
+        if (pluginNames.length === 0) return;
+        for (const plugin of pluginNames) {
+            this.setPlugin(plugin, atob(plugins[plugin]));
         }
     }
 
@@ -170,5 +196,67 @@ export class PluginService {
         a.href = URL.createObjectURL(file);
         a.download = 'telegraf.conf';
         a.click();
+    }
+
+    private jsonPlugins(): string {
+        return JSON.stringify(this.mandatoryPlugins.concat(Object.values(this.selectedPlugins)).filter(
+            plugin => plugin.content,
+        ).map(
+            plugin => {
+                return {name: plugin.name, content: plugin.content};
+            },
+        ));
+    }
+
+    exportPlugins(): void {
+        const a = document.createElement('a');
+        const file = new Blob([this.jsonPlugins()], {type: 'text/plain'});
+        a.href = URL.createObjectURL(file);
+        a.download = 'telegraf-config-' + new Date().toLocaleDateString('en-CA') + '.json';
+        a.click();
+    }
+
+    importPlugins(): void {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.style.display = 'none';
+        document.body.appendChild(input);
+
+        const onEnd = () => {
+            document.body.removeChild(input);
+        };
+
+        input.onchange = () => {
+            if (!input.files || input.files.length == 0 || input.files[0].size > 250000000 || !FileReader) {
+                return onEnd();
+            }
+            const file = input.files[0];
+            const fileReader = new FileReader();
+            fileReader.onload = (e) => {
+                if (!e.target || !e.target.result) {
+                    return onEnd();
+                }
+                let content: string;
+                if (typeof e.target.result === 'string') {
+                    content = e.target.result;
+                } else {
+                    content = new TextDecoder().decode(e.target.result);
+                }
+
+                try {
+                    this.resetPlugins();
+                    const plugins: {name: string, content: string}[] = JSON.parse(content);
+                    for (const plugin of plugins) {
+                        this.setPlugin(plugin.name, plugin.content);
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+                onEnd();
+            };
+            fileReader.readAsText(file);
+        };
+        input.click();
     }
 }

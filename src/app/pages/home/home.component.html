@@ -2,7 +2,11 @@
     <div class="sidebar overflow-auto">
         <h4 class="text-center mt-2">Plugins</h4>
         <div class="divider m-0"></div>
-        <!-- <hr class="my-1"> -->
+        <div class="my-3 grid gap-3 grid-cols-2">
+            <button type="button" class="btn btn-error" (click)="pluginService.importPlugins()">Import</button>
+            <button type="button" class="btn btn-secondary" (click)="pluginService.exportPlugins()">Export</button>
+        </div>
+        <div class="divider m-0"></div>
         <app-plugin-list [mandatoryPlugins]="pluginService.getMandatoryPlugins()"
             [optionalPlugins]="pluginService.getOptionalPlugins()"
             [selectedPlugins]="pluginService.getSelectedPlugins()"

@@ -51,13 +51,13 @@ export class SettingsComponent implements OnInit {
         return Object.values(this.settings);
     }
 
-    jsonSettings(): {[key: string]: any} {
-        return Object.fromEntries(Object.values(this.settings).map(setting => [setting.key, setting.value]));
+    jsonSettings(): string {
+        return JSON.stringify(Object.fromEntries(Object.values(this.settings).map(setting => [setting.key, setting.value])));
     }
 
     exportSettings(): void {
         const a = document.createElement('a');
-        const file = new Blob([JSON.stringify(this.jsonSettings())], {type: 'text/plain'});
+        const file = new Blob([this.jsonSettings()], {type: 'text/plain'});
         a.href = URL.createObjectURL(file);
         a.download = 'settings-' + new Date().toLocaleDateString('en-CA') + '.json';
         a.click();
