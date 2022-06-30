@@ -44,7 +44,7 @@ export class SettingsComponent implements OnInit {
             }
         }
         this.settingsService.saveSettings();
-        this.router.navigate(['/setup']);
+        this.router.navigate(['']);
     }
 
     getSettings(): Setting[] {
