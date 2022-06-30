@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
 
     ngOnInit(): void {
         if (this.pluginService.getSampleConfs() === undefined) {
-            this.router.navigate(['setup']);
+            this.router.navigate(['']);
             return;
         }
 

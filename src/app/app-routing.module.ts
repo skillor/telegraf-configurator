@@ -8,11 +8,7 @@ import { SetupComponent } from './setup/setup.component';
 const routes: Routes = [
     {
         path: '',
-        redirectTo: 'setup',
         pathMatch: 'full',
-    },
-    {
-        path: 'setup',
         component: SetupComponent,
     },
     {
