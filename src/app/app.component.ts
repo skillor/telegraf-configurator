@@ -1,4 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
+import { SettingsService } from './shared/settings/settings.service';
 
 @Component({
     selector: 'app-root',
@@ -12,6 +13,7 @@ export class AppComponent implements OnInit {
     }
 
     constructor(
+        public settingsService: SettingsService,
     ) { }
 
     ngOnInit(): void {
