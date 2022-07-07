@@ -16,6 +16,14 @@ export class SetupComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        if (this.pluginService.hasUnsavedChanges()) {
+            const confirmation = confirm('You have unsaved changes! Are you sure you want to discard them?');
+            if (!confirmation) {
+                this.router.navigate(['home']);
+                return;
+            }
+        }
+
         this.pluginService.loadSampleConfs().subscribe(() => {
             this.route.queryParams.subscribe(
                 (params: {[key: string]: string}) => {

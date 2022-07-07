@@ -21,6 +21,8 @@ export class PluginService {
     private selectedPlugins: {[id: string]: Plugin} = {};
     private selectedPluginsCounter = 0;
 
+    private unsavedChanges = false;
+
     constructor(
         private githubService: GithubService,
         private storageService: StorageService,
@@ -41,7 +43,12 @@ export class PluginService {
         }
     }
 
+    hasUnsavedChanges(): boolean {
+        return this.unsavedChanges;
+    }
+
     resetPlugins(): void {
+        this.unsavedChanges = false;
         this.selectedPlugins = {};
         this.selectedPluginsCounter = 0;
         if (!this.mandatoryPlugins.includes(this.selectedPlugin!)) {
@@ -113,6 +120,7 @@ export class PluginService {
     }
 
     addSelectedPlugin(pluginName: string, content: string | undefined = undefined, select: boolean = true) {
+        this.unsavedChanges = true;
         const plugin = {
             name: pluginName,
             id: this.selectedPluginsCounter,
