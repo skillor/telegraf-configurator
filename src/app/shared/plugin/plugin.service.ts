@@ -33,7 +33,7 @@ export class PluginService {
                 id: 1,
                 name: 'agent',
                 content: undefined,
-                contentPath: 'config/printer/agent.conf',
+                contentPath: 'cmd/telegraf/agent.conf',
                 error: undefined,
             }
         ];
